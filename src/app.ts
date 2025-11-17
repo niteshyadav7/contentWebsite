@@ -1,46 +1,44 @@
 // src/app.ts
-import express, { Application } from 'express';
-import helmet from 'helmet';
-import cors from 'cors';
-import { apiLimiter } from './middleware/rateLimiter.middleware';
-import { errorHandler, notFoundHandler } from './middleware/error.middleware';
-import authRoutes from './routes/auth.routes';
-import publicRoutes from './routes/public.routes';
-import adminRoutes from './routes/admin.routes';
-import metricsRoutes from './routes/metrics.routes';
-import { logger } from './utils/logger';
+import express, { Application } from "express";
+import helmet from "helmet";
+import cors from "cors";
+import { apiLimiter } from "./middleware/rateLimiter.middleware";
+import { errorHandler, notFoundHandler } from "./middleware/error.middleware";
+import authRoutes from "./routes/auth.routes";
+import publicRoutes from "./routes/public.routes";
+import adminRoutes from "./routes/admin.routes";
+import metricsRoutes from "./routes/metrics.routes";
+import { logger } from "./utils/logger";
 
 export const createApp = (): Application => {
   const app = express();
-  
+
   // Security middleware
   app.use(helmet());
-  
+
   // CORS configuration
   const allowedOrigins = [
-  "http://localhost:3000",
-  "https://localhost:3000",
-  "https://contentwebsite.onrender.com",
-  "http://contentwebsite.onrender.com"
-];
+    "https://https://yandp.in",
+    "http://https://yandp.in",
+  ];
 
-const corsOptions = {
-  origin: (origin: any, callback: any) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      console.log("Blocked by CORS:", origin);
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true,
-  optionsSuccessStatus: 200,
-};
-app.use(cors(corsOptions));
+  const corsOptions = {
+    origin: (origin: any, callback: any) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.log("Blocked by CORS:", origin);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+    optionsSuccessStatus: 200,
+  };
+  app.use(cors(corsOptions));
   // Body parser
-  app.use(express.json({ limit: '10mb' }));
-  app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-  
+  app.use(express.json({ limit: "10mb" }));
+  app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+
   // Request logging
   app.use((req, res, next) => {
     logger.info({
@@ -50,28 +48,28 @@ app.use(cors(corsOptions));
     });
     next();
   });
-  
+
   // Rate limiting
-  app.use('/api', apiLimiter);
-  
+  app.use("/api", apiLimiter);
+
   // Health check
-  app.get('/health', (req, res) => {
+  app.get("/health", (req, res) => {
     res.json({
-      status: 'healthy',
+      status: "healthy",
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
     });
   });
-  
+
   // API Routes
-  app.use('/api/auth', authRoutes);
-  app.use('/api', publicRoutes);
-  app.use('/api/admin', adminRoutes);
-  app.use('/api/metrics', metricsRoutes);
-  
+  app.use("/api/auth", authRoutes);
+  app.use("/api", publicRoutes);
+  app.use("/api/admin", adminRoutes);
+  app.use("/api/metrics", metricsRoutes);
+
   // Error handlers (must be last)
   app.use(notFoundHandler);
   app.use(errorHandler);
-  
+
   return app;
 };
