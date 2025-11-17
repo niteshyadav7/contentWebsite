@@ -16,7 +16,7 @@ export const createApp = (): Application => {
   // Security middleware
   app.use(helmet());
 
-  // CORS configuration
+  // CORS configurat
   const allowedOrigins = [
     "https://https://yandp.in",
     "http://https://yandp.in",
