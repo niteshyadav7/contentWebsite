@@ -17,7 +17,12 @@ export const createApp = (): Application => {
   app.use(helmet());
 
   // CORS configurat
-  const allowedOrigins = ["https://yandp.in", "http://yandp.in"];
+  const allowedOrigins = [
+    "https://yandp.in",
+    "http://yandp.in",
+    "http://localhost:3000",
+    "https://localhost:3000",
+  ];
 
   const corsOptions = {
     origin: (origin: any, callback: any) => {
