@@ -17,13 +17,26 @@ export const createApp = (): Application => {
   app.use(helmet());
   
   // CORS configuration
-  const corsOptions = {
-    origin: process.env.FRONTEND_URL || '*',
-    credentials: true,
-    optionsSuccessStatus: 200,
-  };
-  app.use(cors(corsOptions));
-  
+  const allowedOrigins = [
+  "http://localhost:3000",
+  "https://localhost:3000",
+  "https://contentwebsite.onrender.com",
+  "http://contentwebsite.onrender.com"
+];
+
+const corsOptions = {
+  origin: (origin: any, callback: any) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log("Blocked by CORS:", origin);
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  optionsSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
   // Body parser
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
